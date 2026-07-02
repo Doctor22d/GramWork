@@ -1,4 +1,0 @@
-1. notification permission 
-2. Aadhaar verification using Verhoeff checksum algorithm
-3. worker can upload their documents like sharmik and aadhaar card for verification 
-admin can verify their document with their images after verification done admin can store only 4 digits aadhaar number for future purpose because of privacy.
