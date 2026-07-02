@@ -1,0 +1,30 @@
+spring:
+  config:
+    import: "optional:configserver:http://localhost:8888"
+  application:
+    name: AiAnalysisService
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://localhost:27017/gramwork_ai_review}
+
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+
+  ai:
+    google:
+      genai:
+        api-key: ${GEMINI_API_KEY:YOUR_API_KEY_HERE}
+      chat:
+        options:
+          model: gemini-2.5-flash
+
+server:
+  port: 9090
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URL:http://eureka:eureka123@localhost:8761/eureka/}

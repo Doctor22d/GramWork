@@ -1,0 +1,116 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  
+  main:
+    web-application-type: reactive
+  
+  # Redis Configuration for Rate Limiting
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:}
+    timeout: 2000ms
+
+# JWT Configuration
+jwt:
+  secret: ${JWT_SECRET:gramwork-secret-key-for-authentication-should-be-changed-in-production}
+
+
+public:
+  endpoints: /api/auth/login,/api/auth/register,/api/auth/send-otp,/api/auth/verify-otp,/api/auth/ResetPasswordMail,/api/auth/ResetPassword,/actuator/health,/actuator/info
+
+# Eureka Client
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URL:http://${EUREKA_USERNAME:eureka}:${EUREKA_PASSWORD:eureka123}@localhost:8761/eureka/}
+    register-with-eureka: true
+    fetch-registry: true
+    registry-fetch-interval-seconds: 5
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 30
+
+# Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"  # Expose all actuator endpoints
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+    gateway:
+      enabled: true
+  health:
+    circuitbreakers:
+      enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: ${ZIPKIN_URL:http://localhost:9411/api/v2/spans}
+
+# Logging
+logging:
+  level:
+    root: INFO
+    com.gramwork: DEBUG
+    org.springframework.cloud.gateway: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%X{traceId:-},%X{spanId:-}] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/api-gateway.log
+
+---
+springdoc:
+  swagger-ui:
+    urls:
+      - name: Auth Service
+        url: /v3/api-docs/auth-service
+      - name: Laborer Profile Service
+        url: /v3/api-docs/laborer-profile-service
+      - name: Employer Profile Service
+        url: /v3/api-docs/employer-profile-service
+      - name: Job Service
+        url: /v3/api-docs/job-service
+      - name: Assignment Service
+        url: /v3/api-docs/assignment-service
+      - name: Payment Service
+        url: /v3/api-docs/payment-service
+      - name: Notification Service
+        url: /v3/api-docs/notification-service
+      - name: Attendance Service
+        url: /v3/api-docs/attendance-service
+      - name: AI Matching Service
+        url: /v3/api-docs/ai-matching-service
+      - name: AI Analysis Service
+        url: /v3/api-docs/ai-analysis-service
+
+# Docker Profile
+spring:
+  config:
+    activate:
+      on-profile: docker
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${EUREKA_USERNAME:eureka}:${EUREKA_PASSWORD:eureka123}@eureka-server:8761/eureka/
+  instance:
+    hostname: api-gateway
+    prefer-ip-address: false
+
+management:
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans
+

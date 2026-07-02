@@ -1,0 +1,19 @@
+package com.GramWork.laborer.profile.DTO;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class ProfileDeleteEvent implements Serializable {
+    private String workerId;
+    private String workerEmail;
+    private String workerName;
+    private String documentId;
+}

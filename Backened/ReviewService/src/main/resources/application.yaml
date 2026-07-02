@@ -1,0 +1,23 @@
+spring:
+  config:
+    import: "optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888}"
+  application:
+    name: review-service
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://localhost:27017/gramwork}
+      database: gramwork
+      auto-index-creation: true
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+server:
+  port: 8091
+eureka:
+  instance:
+    prefer-ip-address: true
+    hostname: localhost
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URL:http://eureka:eureka123@localhost:8761/eureka/}

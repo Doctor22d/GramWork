@@ -1,0 +1,678 @@
+version: '3.8'
+
+services:
+  # ============================================
+  # Infrastructure Services
+  # ============================================
+  
+  mongodb:
+    image: mongo:7.0
+    container_name: gramwork-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:-admin123}
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+    networks:
+      - gramwork-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  redis:
+    image: redis:7-alpine
+    container_name: gramwork-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-}
+    volumes:
+      - redis_data:/data
+    networks:
+      - gramwork-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: gramwork-rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"   # AMQP port
+      - "15672:15672" # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USERNAME:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-guest}
+      RABBITMQ_DEFAULT_VHOST: /
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - gramwork-network
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  # ============================================
+  # Monitoring Services
+  # ============================================
+
+  zipkin:
+    image: openzipkin/zipkin:latest
+    container_name: gramwork-zipkin
+    restart: unless-stopped
+    ports:
+      - "9411:9411"
+    environment:
+      STORAGE_TYPE: mem
+    networks:
+      - gramwork-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9411/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  # ============================================
+  # Core Services
+  # ============================================
+
+  config-server:
+    build:
+      context: ./config-server
+      dockerfile: Dockerfile
+    image: gramwork/config-server:latest
+    container_name: gramwork-config-server
+    restart: unless-stopped
+    ports:
+      - "8888:8888"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-docker}
+      CONFIG_USERNAME: ${CONFIG_USERNAME:-config}
+      CONFIG_PASSWORD: ${CONFIG_PASSWORD:-config123}
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka/
+    volumes:
+      - ./config-repository:/config-repository:ro
+    networks:
+      - gramwork-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8888/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  eureka-server:
+    build:
+      context: ./eureka-server
+      dockerfile: Dockerfile
+    image: gramwork/eureka-server:latest
+    container_name: gramwork-eureka-server
+    restart: unless-stopped
+    ports:
+      - "8761:8761"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-docker}
+      EUREKA_USERNAME: ${EUREKA_USERNAME:-eureka}
+      EUREKA_PASSWORD: ${EUREKA_PASSWORD:-eureka123}
+      EUREKA_HOSTNAME: eureka-server
+    networks:
+      - gramwork-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8761/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # ============================================
+  # API Gateway
+  # ============================================
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    image: gramwork/api-gateway:latest
+    container_name: gramwork-api-gateway
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-docker}
+      CONFIG_SERVER_URL: http://config-server:8888
+      CONFIG_USERNAME: ${CONFIG_USERNAME:-config}
+      CONFIG_PASSWORD: ${CONFIG_PASSWORD:-config123}
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka/
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      JWT_SECRET: ${JWT_SECRET:-gramwork-secret-key-for-authentication}
+      ZIPKIN_URL: http://zipkin:9411/api/v2/spans
+    depends_on:
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - gramwork-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
+  # ============================================
+  # Business Services
+  # ============================================
+
+  gramwork-auth-service:
+    build:
+      context: ./Auth
+      dockerfile: Dockerfile
+    image: gramwork/auth-service:latest
+    container_name: gramwork-auth-service
+    restart: unless-stopped
+    ports:
+      - "8086:8086"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-docker}
+      CONFIG_SERVER_URL: http://config-server:8888
+      CONFIG_USERNAME: ${CONFIG_USERNAME:-config}
+      CONFIG_PASSWORD: ${CONFIG_PASSWORD:-config123}
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka/
+      MONGODB_URI: mongodb://${MONGO_ROOT_USERNAME:-admin}:${MONGO_ROOT_PASSWORD:-admin123}@mongodb:27017/GramWorkAuth?authSource=admin
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: ${RABBITMQ_USERNAME:-guest}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-guest}
+      JWT_SECRET: ${JWT_SECRET:-gramwork-secret-key-for-authentication}
+      SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USERNAME: ${SMTP_USERNAME:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      ZIPKIN_URL: http://zipkin:9411/api/v2/spans
+    depends_on:
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - gramwork-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8086/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
+  laborer-profile-service:
+    build:
+      context: ./laborer-profile-service
+      dockerfile: Dockerfile
+    image: gramwork/laborer-profile-service:latest
+    container_name: gramwork-laborer-profile-service
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-docker}
+      CONFIG_SERVER_URL: http://config-server:8888
+      CONFIG_USERNAME: ${CONFIG_USERNAME:-config}
+      CONFIG_PASSWORD: ${CONFIG_PASSWORD:-config123}
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka/
+      MONGODB_URI: mongodb://${MONGO_ROOT_USERNAME:-admin}:${MONGO_ROOT_PASSWORD:-admin123}@mongodb:27017/GramWorkLaborerProfile?authSource=admin
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      ZIPKIN_URL: http://zipkin:9411/api/v2/spans
+    depends_on:
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      gramwork-auth-service:
+        condition: service_healthy
+    networks:
+      - gramwork-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8081/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
+  employer-profile-service:
+    build:
+      context: ./employer-profile-service
+      dockerfile: Dockerfile
+    image: gramwork/employer-profile-service:latest
+    container_name: gramwork-employer-profile-service
+    restart: unless-stopped
+    ports:
+      - "8089:8089"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-docker}
+      CONFIG_SERVER_URL: http://config-server:8888
+      CONFIG_USERNAME: ${CONFIG_USERNAME:-config}
+      CONFIG_PASSWORD: ${CONFIG_PASSWORD:-config123}
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka/
+      MONGODB_URI: mongodb://${MONGO_ROOT_USERNAME:-admin}:${MONGO_ROOT_PASSWORD:-admin123}@mongodb:27017/GramWorkEmployerProfile?authSource=admin
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      ZIPKIN_URL: http://zipkin:9411/api/v2/spans
+    depends_on:
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      gramwork-auth-service:
+        condition: service_healthy
+    networks:
+      - gramwork-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8089/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
+  job-service:
+    build:
+      context: ./Job-Service
+      dockerfile: Dockerfile
+    image: gramwork/job-service:latest
+    container_name: gramwork-job-service
+    restart: unless-stopped
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-docker}
+      CONFIG_SERVER_URL: http://config-server:8888
+      CONFIG_USERNAME: ${CONFIG_USERNAME:-config}
+      CONFIG_PASSWORD: ${CONFIG_PASSWORD:-config123}
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka/
+      MONGODB_URI: mongodb://${MONGO_ROOT_USERNAME:-admin}:${MONGO_ROOT_PASSWORD:-admin123}@mongodb:27017/GramWorkJob?authSource=admin
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: ${RABBITMQ_USERNAME:-guest}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-guest}
+      ZIPKIN_URL: http://zipkin:9411/api/v2/spans
+    depends_on:
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - gramwork-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8083/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
+  assignment-service:
+    build:
+      context: ./Assignment-Service
+      dockerfile: Dockerfile
+    image: gramwork/assignment-service:latest
+    container_name: gramwork-assignment-service
+    restart: unless-stopped
+    ports:
+      - "8084:8084"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-docker}
+      CONFIG_SERVER_URL: http://config-server:8888
+      CONFIG_USERNAME: ${CONFIG_USERNAME:-config}
+      CONFIG_PASSWORD: ${CONFIG_PASSWORD:-config123}
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka/
+      MONGODB_URI: mongodb://${MONGO_ROOT_USERNAME:-admin}:${MONGO_ROOT_PASSWORD:-admin123}@mongodb:27017/GramWorkAssignment?authSource=admin
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: ${RABBITMQ_USERNAME:-guest}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-guest}
+      ZIPKIN_URL: http://zipkin:9411/api/v2/spans
+    depends_on:
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      job-service:
+        condition: service_healthy
+    networks:
+      - gramwork-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8084/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
+  payment-service:
+    build:
+      context: ./Payment-Service
+      dockerfile: Dockerfile
+    image: gramwork/payment-service:latest
+    container_name: gramwork-payment-service
+    restart: unless-stopped
+    ports:
+      - "8088:8088"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-docker}
+      CONFIG_SERVER_URL: http://config-server:8888
+      CONFIG_USERNAME: ${CONFIG_USERNAME:-config}
+      CONFIG_PASSWORD: ${CONFIG_PASSWORD:-config123}
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka/
+      MONGODB_URI: mongodb://${MONGO_ROOT_USERNAME:-admin}:${MONGO_ROOT_PASSWORD:-admin123}@mongodb:27017/GramWorkPayment?authSource=admin
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: ${RABBITMQ_USERNAME:-guest}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-guest}
+      RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID:-}
+      RAZORPAY_KEY_SECRET: ${RAZORPAY_KEY_SECRET:-}
+      STRIPE_API_KEY: ${STRIPE_API_KEY:-}
+      ZIPKIN_URL: http://zipkin:9411/api/v2/spans
+    depends_on:
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      assignment-service:
+        condition: service_healthy
+    networks:
+      - gramwork-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8088/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
+  notification-service:
+    build:
+      context: ./Notification-Service
+      dockerfile: Dockerfile
+    image: gramwork/notification-service:latest
+    container_name: gramwork-notification-service
+    restart: unless-stopped
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-docker}
+      CONFIG_SERVER_URL: http://config-server:8888
+      CONFIG_USERNAME: ${CONFIG_USERNAME:-config}
+      CONFIG_PASSWORD: ${CONFIG_PASSWORD:-config123}
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka/
+      MONGODB_URI: mongodb://${MONGO_ROOT_USERNAME:-admin}:${MONGO_ROOT_PASSWORD:-admin123}@mongodb:27017/GramWorkNotification?authSource=admin
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: ${RABBITMQ_USERNAME:-guest}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-guest}
+      SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USERNAME: ${SMTP_USERNAME:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      TWILIO_ACCOUNT_SID: ${TWILIO_ACCOUNT_SID:-}
+      TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN:-}
+      FCM_SERVER_KEY: ${FCM_SERVER_KEY:-}
+      ZIPKIN_URL: http://zipkin:9411/api/v2/spans
+    depends_on:
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - gramwork-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8082/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
+  review-service:
+    build:
+      context: ./ReviewService
+      dockerfile: Dockerfile
+    image: gramwork/review-service:latest
+    container_name: gramwork-review-service
+    restart: unless-stopped
+    ports:
+      - "8091:8088"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-docker}
+      CONFIG_SERVER_URL: http://config-server:8888
+      CONFIG_USERNAME: ${CONFIG_USERNAME:-config}
+      CONFIG_PASSWORD: ${CONFIG_PASSWORD:-config123}
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka/
+      MONGODB_URI: mongodb://${MONGO_ROOT_USERNAME:-admin}:${MONGO_ROOT_PASSWORD:-admin123}@mongodb:27017/gramwork_ai_review?authSource=admin
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      ZIPKIN_URL: http://zipkin:9411/api/v2/spans
+    depends_on:
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - gramwork-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8088/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
+  ai-analysis-service:
+    build:
+      context: ./AiAnalysisService
+      dockerfile: Dockerfile
+    image: gramwork/ai-analysis-service:latest
+    container_name: gramwork-ai-analysis-service
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-docker}
+      CONFIG_SERVER_URL: http://config-server:8888
+      CONFIG_USERNAME: ${CONFIG_USERNAME:-config}
+      CONFIG_PASSWORD: ${CONFIG_PASSWORD:-config123}
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka/
+      MONGODB_URI: mongodb://${MONGO_ROOT_USERNAME:-admin}:${MONGO_ROOT_PASSWORD:-admin123}@mongodb:27017/gramwork_ai_review?authSource=admin
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      ZIPKIN_URL: http://zipkin:9411/api/v2/spans
+    depends_on:
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - gramwork-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9090/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
+  ai-matching-service:
+    build:
+      context: ./AiMatchingService
+      dockerfile: Dockerfile
+    image: gramwork/ai-matching-service:latest
+    container_name: gramwork-ai-matching-service
+    restart: unless-stopped
+    ports:
+      - "8087:8087"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-docker}
+      CONFIG_SERVER_URL: http://config-server:8888
+      CONFIG_USERNAME: ${CONFIG_USERNAME:-config}
+      CONFIG_PASSWORD: ${CONFIG_PASSWORD:-config123}
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka/
+      MONGODB_URI: mongodb://${MONGO_ROOT_USERNAME:-admin}:${MONGO_ROOT_PASSWORD:-admin123}@mongodb:27017/gramwork_ai_matching?authSource=admin
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      ZIPKIN_URL: http://zipkin:9411/api/v2/spans
+    depends_on:
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - gramwork-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8087/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
+  attendance-service:
+    build:
+      context: ./Attendence
+      dockerfile: Dockerfile
+    image: gramwork/attendance-service:latest
+    container_name: gramwork-attendance-service
+    restart: unless-stopped
+    ports:
+      - "8090:8090"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-docker}
+      CONFIG_SERVER_URL: http://config-server:8888
+      CONFIG_USERNAME: ${CONFIG_USERNAME:-config}
+      CONFIG_PASSWORD: ${CONFIG_PASSWORD:-config123}
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka/
+      MONGODB_URI: mongodb://${MONGO_ROOT_USERNAME:-admin}:${MONGO_ROOT_PASSWORD:-admin123}@mongodb:27017/gramwork_attendance?authSource=admin
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      ZIPKIN_URL: http://zipkin:9411/api/v2/spans
+    depends_on:
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - gramwork-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8090/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
+# ============================================
+# Networks
+# ============================================
+
+networks:
+  gramwork-network:
+    driver: bridge
+    name: gramwork-network
+
+# ============================================
+# Volumes
+# ============================================
+
+volumes:
+  mongodb_data:
+    driver: local
+  mongodb_config:
+    driver: local
+  redis_data:
+    driver: local
+  rabbitmq_data:
+    driver: local

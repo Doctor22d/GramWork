@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: Assignment-Service
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/gramwork
+      database: gramwork
+  rabbitmq:
+    host: ${RABBIT_HOST:localhost}
+    port: ${RABBIT_PORT:5672}
+    username: ${RABBIT_USERNAME:guest}
+    password: ${RABBIT_PASSWORD:guest}
+rabbitmq:
+  exchange:
+    notification: notification.exchange
+  routing-key:
+    notification: notification.routing.key
+
+server:
+  port: 8083
+
+---
+spring:
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            connectTimeout: 5000
+            readTimeout: 5000
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    hostname: localhost
+  client:
+    service-url:
+      defaultZone: http://eureka:eureka123@localhost:8761/eureka/

@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: Auth
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/gramwork
+      database: gramwork
+    redis:
+      host: localhost
+      port: 6379
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+  jwt:
+    secret: ${JWT_SECRET:change-me-in-production}
+rabbitmq:
+  exchange:
+    notification: notification.exchange
+  routing-key:
+    notification: notification.routing.key
+server:
+  port: 8086
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    hostname: localhost
+  client:
+    service-url:
+      defaultZone: http://eureka:eureka123@localhost:8761/eureka/
+
+---
+spring:
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            connectTimeout: 5000
+            readTimeout: 5000

@@ -1,0 +1,149 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: config-server
+
+  # Security Configuration
+  security:
+    user:
+      name: ${CONFIG_USERNAME:config}
+      password: ${CONFIG_PASSWORD:config123}
+
+  # Cloud Config Server Configuration
+  cloud:
+    config:
+      server:
+        # Native Profile for Local Development (default)
+        native:
+          search-locations: classpath:/config,file:../config-repository
+
+        # Encryption Configuration (for sensitive properties)
+        encrypt:
+          enabled: false
+
+        # Server Configuration
+        overrides:
+          # Default properties for all services
+          management.endpoints.web.exposure.include: health,info,metrics,prometheus
+          management.endpoint.health.show-details: always
+
+  # Profiles
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:native}
+
+# Eureka Client Configuration
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URL:http://${EUREKA_USERNAME:eureka}:${EUREKA_PASSWORD:eureka123}@localhost:8761/eureka/}
+    register-with-eureka: true
+    fetch-registry: true
+    registry-fetch-interval-seconds: 30
+  instance:
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 30
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    metadata-map:
+      zone: zone1
+      version: 1.0.0
+    health-check-url-path: /actuator/health
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,env,configprops
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.gramwork: DEBUG
+    org.springframework.cloud.config: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/config-server.log
+
+---
+# Development Profile (Native file system)
+spring:
+  config:
+    activate:
+      on-profile: dev
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: file:../config-repository
+
+logging:
+  level:
+    root: DEBUG
+    com.gramwork: DEBUG
+    org.springframework.cloud.config: DEBUG
+
+---
+# Production Profile (Git repository)
+spring:
+  config:
+    activate:
+      on-profile: prod
+  cloud:
+    config:
+      server:
+        git:
+          # Git Repository Configuration (Production)
+          uri: ${CONFIG_GIT_URI:https://github.com/your-org/gramwork-config-repo.git}
+          default-label: ${CONFIG_GIT_BRANCH:main}
+          clone-on-start: true
+          force-pull: true
+          delete-untracked-branches: true
+          timeout: 10
+          # Git Authentication (if private repo)
+          username: ${CONFIG_GIT_USERNAME:}
+          password: ${CONFIG_GIT_PASSWORD:}
+          search-paths:
+            - '{application}'
+            - 'config/{application}'
+
+logging:
+  level:
+    root: WARN
+    com.gramwork: INFO
+    org.springframework.cloud.config: INFO
+
+---
+# Docker Profile
+spring:
+  config:
+    activate:
+      on-profile: docker
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: file:/config-repository
+        git:
+          uri: ${CONFIG_GIT_URI:file:///config-repository}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${EUREKA_USERNAME:eureka}:${EUREKA_PASSWORD:eureka123}@eureka-server:8761/eureka/
+  instance:
+    hostname: config-server
+    prefer-ip-address: false
