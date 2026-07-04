@@ -1,0 +1,27 @@
+# === IDE ===
+.idea/
+*.iml
+.vscode/
+*.swp
+
+# === AI Agent Configs ===
+.junie/
+
+# === Runtime Logs ===
+logs/
+*.log
+
+# === Build Output ===
+target/
+
+# === Node.js (not needed in Java backend) ===
+node_modules/
+package.json
+package-lock.json
+
+# === OS Files ===
+Thumbs.db
+.DS_Store
+
+# === Environment ===
+.env
