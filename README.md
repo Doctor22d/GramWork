@@ -395,6 +395,67 @@ GramWork/
 
 ---
 
-## 📄 License
+```
+POST /api/auth/login
+```
 
-Copyright © GramWork. All rights reserved.
+Include the JWT in every protected request:
+
+```
+Authorization: Bearer <JWT_TOKEN>
+```
+
+### Roles
+
+| Role | Access Level |
+| --- | --- |
+| `ADMIN` | Full system access |
+| `EMPLOYER` | Job posting, worker management |
+| `WORKER` | Job applications, attendance |
+
+---
+
+## 📂 Project Structure
+
+```
+GramWork/
+├── Backend/
+│   ├── api-gateway/              # API Gateway (Port 8080)
+│   ├── config-server/            # Spring Cloud Config Server
+│   ├── config-repository/        # Configuration files repository
+│   ├── eureka-server/            # Eureka Service Discovery
+│   ├── Auth/                     # Authentication & Authorization
+│   ├── laborer-profile/          # Worker Profile Service
+│   ├── employer-profile-service/ # Employer Profile Service
+│   ├── Job/                      # Job Service (GeoSpatial)
+│   ├── Assignment-Service/       # Assignment Management
+│   ├── Attendence/               # Attendance Tracking
+│   ├── paymentService/           # Payment & Invoicing
+│   ├── NotificationService/      # Notifications (RabbitMQ + WebSocket)
+│   ├── ReviewService/            # Ratings & Reviews
+│   ├── AiMatchingService/        # AI Worker Recommendation
+│   ├── AiAnalysisService/        # AI Review Moderation
+│   ├── docker-compose.yml        # Infrastructure containers
+│   └── .env.example              # Environment variables template
+└── README.md
+```
+
+---
+
+## 📚 Skills Demonstrated
+
+- Enterprise Java Development
+- Backend System Design
+- Microservices Architecture
+- Distributed Systems
+- Spring Cloud Ecosystem
+- REST API Development
+- Secure Authentication & Authorization
+- Event-Driven Architecture
+- Real-Time Communication
+- AI Integration
+- GeoSpatial Search
+- Cloud File Storage (Amazon S3)
+- Docker Containerization
+
+---
