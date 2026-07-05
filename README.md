@@ -10,7 +10,49 @@ The project follows a **Microservices Architecture** with centralized configurat
 
 # 🏗️ System Architecture
 
-![System Architecture](GramWork_Architecture_Preview.png)
+```text
+                                +----------------------+
+                                |  Web / Mobile App   |
+                                | Employer • Worker   |
+                                |      Admin          |
+                                +----------+----------+
+                                           |
+                                           v
+                                +----------------------+
+                                |     API Gateway      |
+                                | Routing • Security   |
+                                +----------+-----------+
+                                           |
+                   +-----------------------+------------------------+
+                   |                                                |
+                   v                                                v
+          +--------------------+                         +----------------------+
+          |   Eureka Server    |                         |   Config Server      |
+          | Service Discovery  |                         | Centralized Config   |
+          +--------------------+                         +----------------------+
+                                           |
+--------------------------------------------------------------------------------------------------------------
+|            |             |             |             |             |            |            |             |
+v            v             v             v             v             v            v            v             v
++-----------+ +-----------+ +-----------+ +-----------+ +-----------+ +-----------+ +-----------+ +-----------+ +-----------+
+|   Auth    | |  Worker   | | Employer  | |    Job    | |Assignment | | Attendance| |  Payment  | |  Review   | | AI Service|
+|  Service  | |  Service  | |  Service  | |  Service  | |  Service  | |  Service  | |  Service  | |  Service  | | Matching &|
+| JWT/RBAC  | | Profile   | | Profiles  | | GeoSearch | | Workflow  | | Tracking  | | Invoice   | | Moderation| | Analysis  |
++-----------+ +-----------+ +-----------+ +-----------+ +-----------+ +-----------+ +-----------+ +-----------+ +-----------+
+        \          |             |              |              |              |             |             |          /
+         \         |             |              |              |              |             |             |         /
+          -----------------------------------------------------------------------------------------------
+                                               |
+                                   +-------------------------------+
+                                   |   Notification Service        |
+                                   | RabbitMQ + WebSocket          |
+                                   +-------------------------------+
+                                               |
+                         +------------------------------------------------------+
+                         | MongoDB | Redis | Amazon S3                          |
+                         | GeoSpatial | OTP Cache | Secure Document Storage     |
+                         +------------------------------------------------------+
+```
 
 ---
 
@@ -114,17 +156,17 @@ Automatically detects:
 
 | Service | Port | Description |
 |----------|------|-------------|
-| **API Gateway** | `8080` | Centralized routing, authentication & load balancing |
-| **Config Server** | `8888` | Centralized configuration management |
-| **Eureka Server** | `8761` | Service registry & discovery |
-| **Auth Service** | `8086` | Authentication, JWT & RBAC |
-| **Worker Profile Service** | `8081` | Worker profiles & verification |
-| **Employer Profile Service** | `8089` | Employer management |
-| **Job Service** | `8083` | Job posting & nearby worker search |
-| **Assignment Service** | `8084` | Assignment lifecycle |
+| **API Gateway** | 8080 | Centralized routing, authentication & load balancing |
+| **Config Server** | 8888 | Centralized configuration management |
+| **Eureka Server** | 8761 | Service registry & discovery |
+| **Auth Service** | 8086 | Authentication, JWT & RBAC |
+| **Worker Profile Service** | 8081 | Worker profiles & verification |
+| **Employer Profile Service** | 8089 | Employer management |
+| **Job Service** | 8083 | Job posting & nearby worker search |
+| **Assignment Service** | 8084 | Assignment lifecycle |
 | **Attendance Service** | — | Attendance & work verification |
-| **Payment Service** | `8088` | Payments & PDF invoices |
-| **Notification Service** | `8082` | RabbitMQ & WebSocket notifications |
+| **Payment Service** | 8088 | Payments & PDF invoices |
+| **Notification Service** | 8082 | RabbitMQ & WebSocket notifications |
 | **Review Service** | — | Ratings & AI review moderation |
 | **AI Service** | — | AI matching, recommendations & analytics |
 
