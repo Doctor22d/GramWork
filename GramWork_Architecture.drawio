@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-07-05T10:00:00.000Z" agent="draw.io" version="21.6.5" type="device">
+  <diagram id="gramwork-arch" name="GramWork Architecture">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1870" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ===== TITLE ===== -->
+        <mxCell id="2" value="GramWork &amp;ndash; Enterprise Workforce Management Platform"
+          style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=22;fontStyle=1;fontColor=#1A2744;"
+          vertex="1" parent="1">
+          <mxGeometry x="50" y="15" width="1600" height="45" as="geometry" />
+        </mxCell>
+
+        <mxCell id="3" value="Java  &amp;bull;  Spring Boot  &amp;bull;  Microservices  &amp;bull;  Spring Cloud  &amp;bull;  AI  &amp;bull;  MongoDB  &amp;bull;  Redis  &amp;bull;  RabbitMQ  &amp;bull;  Docker"
+          style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=13;fontColor=#4A90D9;fontStyle=2;"
+          vertex="1" parent="1">
+          <mxGeometry x="50" y="60" width="1600" height="28" as="geometry" />
+        </mxCell>
+
+        <!-- ===== CLIENT LAYER ===== -->
+        <mxCell id="4" value="CLIENT LAYER"
+          style="swimlane;startSize=28;fillColor=#E3F2FD;strokeColor=#1565C0;fontStyle=1;fontSize=11;fontColor=#1565C0;rounded=1;arcSize=4;"
+          vertex="1" parent="1">
+          <mxGeometry x="50" y="100" width="1250" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="5" value="&lt;b&gt;Employer Web App&lt;/b&gt;&lt;br/&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;React / Next.js&lt;/font&gt;"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=11;arcSize=15;"
+          vertex="1" parent="4">
+          <mxGeometry x="60" y="35" width="220" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="6" value="&lt;b&gt;Worker Mobile App&lt;/b&gt;&lt;br/&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;Android / React Native&lt;/font&gt;"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=11;arcSize=15;"
+          vertex="1" parent="4">
+          <mxGeometry x="515" y="35" width="220" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="7" value="&lt;b&gt;Admin Dashboard&lt;/b&gt;&lt;br/&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;Web Portal&lt;/font&gt;"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#E65100;fontSize=11;arcSize=15;"
+          vertex="1" parent="4">
+          <mxGeometry x="970" y="35" width="220" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- ===== API GATEWAY ===== -->
+        <mxCell id="10" value="&lt;b style=&quot;font-size:15px;&quot;&gt;API GATEWAY&lt;/b&gt;&lt;br/&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;Centralized Routing  |  JWT Authentication  |  Load Balancing  |  Rate Limiting  |  SSL Termination&lt;/font&gt;"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1565C0;strokeColor=#0D47A1;fontColor=#FFFFFF;fontSize=11;align=center;arcSize=4;"
+          vertex="1" parent="1">
+          <mxGeometry x="50" y="260" width="1250" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- ===== SERVICE DISCOVERY & CONFIG ===== -->
+        <mxCell id="11" value="SERVICE DISCOVERY &amp;amp; CONFIGURATION"
+          style="swimlane;startSize=28;fillColor=#F3E5F5;strokeColor=#7B1FA2;fontStyle=1;fontSize=11;fontColor=#4A148C;rounded=1;arcSize=4;"
+          vertex="1" parent="1">
+          <mxGeometry x="50" y="380" width="1250" height="95" as="geometry" />
+        </mxCell>
+
+        <mxCell id="12" value="&lt;b&gt;Eureka Server&lt;/b&gt;&lt;br/&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;Service Discovery &amp;amp; Registry&lt;/font&gt;"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EDE7F6;strokeColor=#7B1FA2;fontSize=11;arcSize=15;"
+          vertex="1" parent="11">
+          <mxGeometry x="50" y="33" width="260" height="48" as="geometry" />
+        </mxCell>
+
+        <mxCell id="13" value="&lt;b&gt;Spring Cloud Config Server&lt;/b&gt;&lt;br/&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;Centralized Configuration Management&lt;/font&gt;"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#388E3C;fontSize=11;arcSize=15;"
+          vertex="1" parent="11">
+          <mxGeometry x="430" y="33" width="320" height="48" as="geometry" />
+        </mxCell>
+
+        <mxCell id="14" value="&lt;b&gt;OpenFeign&lt;/b&gt;&lt;br/&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;Inter-Service REST Communication&lt;/font&gt;"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#F57F17;fontSize=11;arcSize=15;"
+          vertex="1" parent="11">
+          <mxGeometry x="890" y="33" width="300" height="48" as="geometry" />
+        </mxCell>
+
+        <!-- ===== MICROSERVICES LAYER ===== -->
+        <mxCell id="20" value="MICROSERVICES LAYER"
+          style="swimlane;startSize=28;fillColor=#FAFAFA;strokeColor=#455A64;fontStyle=1;fontSize=11;fontColor=#263238;rounded=1;arcSize=2;"
+          vertex="1" parent="1">
+          <mxGeometry x="50" y="525" width="1250" height="870" as="geometry" />
+        </mxCell>
+
+        <!-- ROW 1: Auth, Employer, Worker -->
+
+        <mxCell id="21" value="&lt;b&gt;Auth Service&lt;/b&gt;&lt;br/&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;&#x2022; JWT Authentication&lt;br/&gt;&#x2022; Role-Based Authorization (RBAC)&lt;br/&gt;&#x2022; User Login / Register&lt;br/&gt;&#x2022; OTP Verification (Email/SMS)&lt;br/&gt;&#x2022; Session Management&lt;/font&gt;"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=11;verticalAlign=top;align=left;spacingLeft=8;spacingTop=6;arcSize=8;"
+          vertex="1" parent="20">
+          <mxGeometry x="20" y="40" width="360" height="155" as="geometry" />
+        </mxCell>
+
+        <mxCell id="22" value="Redis"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#C62828;fontSize=9;fontColor=#B71C1C;arcSize=50;"
+          vertex="1" parent="20">
+          <mxGeometry x="20" y="200" width="70" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="23" value="MongoDB"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=9;fontColor=#1B5E20;arcSize=50;"
+          vertex="1" parent="20">
+          <mxGeometry x="100" y="200" width="75" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="24" value="&lt;b&gt;Employer Profile Service&lt;/b&gt;&lt;br/&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;&#x2022; Employer Profile Management&lt;br/&gt;&#x2022; Job Posting &amp;amp; Management&lt;br/&gt;&#x2022; Employer Dashboard&lt;br/&gt;&#x2022; Search &amp;amp; Filter Workers&lt;br/&gt;&#x2022; Profile Verification&lt;/font&gt;"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=11;verticalAlign=top;align=left;spacingLeft=8;spacingTop=6;arcSize=8;"
+          vertex="1" parent="20">
+          <mxGeometry x="445" y="40" width="360" height="155" as="geometry" />
+        </mxCell>
+
+        <mxCell id="25" value="MongoDB"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=9;fontColor=#1B5E20;arcSize=50;"
+          vertex="1" parent="20">
+          <mxGeometry x="445" y="200" width="75" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="26" value="&lt;b&gt;Laborer Profile Service&lt;/b&gt;&lt;br/&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;&#x2022; Worker Profile Management&lt;br/&gt;&#x2022; Aadhaar Card Verification&lt;br/&gt;&#x2022; Shramik Card Verification&lt;br/&gt;&#x2022; Live GPS Location Tracking&lt;br/&gt;&#x2022; Availability Status Management&lt;/font&gt;"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#B3E5FC;strokeColor=#0288D1;fontSize=11;verticalAlign=top;align=left;spacingLeft=8;spacingTop=6;arcSize=8;"
+          vertex="1" parent="20">
+          <mxGeometry x="870" y="40" width="360" height="155" as="geometry" />
+        </mxCell>
+
+        <mxCell id="27" value="MongoDB"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=9;fontColor=#1B5E20;arcSize=50;"
+          vertex="1" parent="20">
+          <mxGeometry x="870" y="200" width="75" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- ROW 2: Job, Assignment, Attendance -->
+
+        <mxCell id="28" value="&lt;b&gt;Job Service&lt;/b&gt;&lt;br/&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;&#x2022; Create &amp;amp; Manage Job Listings&lt;br/&gt;&#x2022; Nearby Worker Search&lt;br/&gt;&#x2022; GeoSpatial Query (2dsphere)&lt;br/&gt;&#x2022; Match Workers to Jobs&lt;br/&gt;&#x2022; GeoJSON Location Data&lt;/font&gt;"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#B2DFDB;strokeColor=#00796B;fontSize=11;verticalAlign=top;align=left;spacingLeft=8;spacingTop=6;arcSize=8;"
+          vertex="1" parent="20">
+          <mxGeometry x="20" y="235" width="360" height="155" as="geometry" />
+        </mxCell>
+
+        <mxCell id="29" value="MongoDB + GeoJSON"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=9;fontColor=#1B5E20;arcSize=50;"
+          vertex="1" parent="20">
+          <mxGeometry x="20" y="395" width="130" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="30" value="&lt;b&gt;Assignment Service&lt;/b&gt;&lt;br/&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;&#x2022; Assign Worker to Job&lt;br/&gt;&#x2022; Accept / Reject Job Request&lt;br/&gt;&#x2022; Track Job Completion&lt;br/&gt;&#x2022; Job Status Management&lt;br/&gt;&#x2022; Assignment History&lt;/font&gt;"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCEDC8;strokeColor=#558B2F;fontSize=11;verticalAlign=top;align=left;spacingLeft=8;spacingTop=6;arcSize=8;"
+          vertex="1" parent="20">
+          <mxGeometry x="445" y="235" width="360" height="155" as="geometry" />
+        </mxCell>
+
+        <mxCell id="31" value="MongoDB"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=9;fontColor=#1B5E20;arcSize=50;"
+          vertex="1" parent="20">
+          <mxGeometry x="445" y="395" width="75" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="32" value="&lt;b&gt;Attendance Service&lt;/b&gt;&lt;br/&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;&#x2022; Mark Daily Attendance&lt;br/&gt;&#x2022; Verify Work Completion&lt;br/&gt;&#x2022; Attendance History Tracking&lt;br/&gt;&#x2022; Working Hours Calculation&lt;br/&gt;&#x2022; GPS-Based Check-In/Out&lt;/font&gt;"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0F4C3;strokeColor=#9E9D24;fontSize=11;verticalAlign=top;align=left;spacingLeft=8;spacingTop=6;arcSize=8;"
+          vertex="1" parent="20">
+          <mxGeometry x="870" y="235" width="360" height="155" as="geometry" />
+        </mxCell>
+
+        <mxCell id="33" value="MongoDB"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=9;fontColor=#1B5E20;arcSize=50;"
+          vertex="1" parent="20">
+          <mxGeometry x="870" y="395" width="75" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- ROW 3: Payment, Notification, Review -->
+
+        <mxCell id="34" value="&lt;b&gt;Payment Service&lt;/b&gt;&lt;br/&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;&#x2022; Process Worker Payments&lt;br/&gt;&#x2022; Generate PDF Invoice&lt;br/&gt;&#x2022; Payment Transaction History&lt;br/&gt;&#x2022; Salary Disbursement&lt;br/&gt;&#x2022; Payment Status Tracking&lt;/font&gt;"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#E65100;fontSize=11;verticalAlign=top;align=left;spacingLeft=8;spacingTop=6;arcSize=8;"
+          vertex="1" parent="20">
+          <mxGeometry x="20" y="430" width="360" height="155" as="geometry" />
+        </mxCell>
+
+        <mxCell id="35" value="MongoDB"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=9;fontColor=#1B5E20;arcSize=50;"
+          vertex="1" parent="20">
+          <mxGeometry x="20" y="590" width="75" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="36" value="&lt;b&gt;Notification Service&lt;/b&gt;&lt;br/&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;&#x2022; In-App Notifications&lt;br/&gt;&#x2022; Push Notifications (Mobile)&lt;br/&gt;&#x2022; Real-Time Messaging&lt;br/&gt;&#x2022; Email Alert System&lt;br/&gt;&#x2022; Event-Driven via RabbitMQ&lt;/font&gt;"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1BEE7;strokeColor=#6A1B9A;fontSize=11;verticalAlign=top;align=left;spacingLeft=8;spacingTop=6;arcSize=8;"
+          vertex="1" parent="20">
+          <mxGeometry x="445" y="430" width="360" height="155" as="geometry" />
+        </mxCell>
+
+        <mxCell id="37" value="RabbitMQ"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#E65100;fontSize=9;fontColor=#BF360C;arcSize=50;"
+          vertex="1" parent="20">
+          <mxGeometry x="445" y="590" width="75" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="38" value="WebSocket"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#B3E5FC;strokeColor=#0288D1;fontSize=9;fontColor=#01579B;arcSize=50;"
+          vertex="1" parent="20">
+          <mxGeometry x="530" y="590" width="75" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="39" value="&lt;b&gt;Review Service&lt;/b&gt;&lt;br/&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;&#x2022; Submit Worker Reviews&lt;br/&gt;&#x2022; Rate Workers (1-5 Stars)&lt;br/&gt;&#x2022; Review History&lt;br/&gt;&#x2022; Rating Aggregation&lt;br/&gt;&#x2022; Sends Reviews to AI Analysis&lt;/font&gt;"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE4EC;strokeColor=#AD1457;fontSize=11;verticalAlign=top;align=left;spacingLeft=8;spacingTop=6;arcSize=8;"
+          vertex="1" parent="20">
+          <mxGeometry x="870" y="430" width="360" height="155" as="geometry" />
+        </mxCell>
+
+        <mxCell id="40" value="MongoDB"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=9;fontColor=#1B5E20;arcSize=50;"
+          vertex="1" parent="20">
+          <mxGeometry x="870" y="590" width="75" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- ROW 4: AI Services -->
+
+        <mxCell id="41" value="&lt;b&gt;AI Analysis Service &amp;mdash; Review Moderation&lt;/b&gt;&lt;br/&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;&lt;i&gt;Input: Review text from Review Service&lt;/i&gt;&lt;br/&gt;&#x2022; Spam Review Detection&lt;br/&gt;&#x2022; Fake Review Detection&lt;br/&gt;&#x2022; Toxic Comment Filtering&lt;br/&gt;&#x2022; Abusive Language Detection&lt;br/&gt;&#x2022; Sentiment Analysis&lt;br/&gt;&lt;i&gt;Output: Clean Review / Flagged Review&lt;/i&gt;&lt;/font&gt;"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D1C4E9;strokeColor=#311B92;fontSize=11;verticalAlign=top;align=left;spacingLeft=8;spacingTop=6;arcSize=8;"
+          vertex="1" parent="20">
+          <mxGeometry x="20" y="625" width="570" height="185" as="geometry" />
+        </mxCell>
+
+        <mxCell id="43" value="MongoDB"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=9;fontColor=#1B5E20;arcSize=50;"
+          vertex="1" parent="20">
+          <mxGeometry x="20" y="815" width="75" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="42" value="&lt;b&gt;AI Matching Service &amp;mdash; Worker Recommendation&lt;/b&gt;&lt;br/&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;&lt;i&gt;Input: Job Requirements + Worker Profiles&lt;/i&gt;&lt;br/&gt;&#x2022; Analyze Worker Rating &amp;amp; Reviews&lt;br/&gt;&#x2022; Attendance Score Analysis&lt;br/&gt;&#x2022; Work Experience Evaluation&lt;br/&gt;&#x2022; Completed Jobs Count&lt;br/&gt;&#x2022; Reliability Score Calculation&lt;br/&gt;&lt;i&gt;Output: Ranked Worker Match Score&lt;/i&gt;&lt;/font&gt;"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C5CAE9;strokeColor=#1A237E;fontSize=11;verticalAlign=top;align=left;spacingLeft=8;spacingTop=6;arcSize=8;"
+          vertex="1" parent="20">
+          <mxGeometry x="660" y="625" width="570" height="185" as="geometry" />
+        </mxCell>
+
+        <mxCell id="44" value="MongoDB"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=9;fontColor=#1B5E20;arcSize=50;"
+          vertex="1" parent="20">
+          <mxGeometry x="660" y="815" width="75" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- ===== MESSAGING LAYER ===== -->
+        <mxCell id="50" value="ASYNCHRONOUS EVENT PROCESSING"
+          style="swimlane;startSize=28;fillColor=#FFF3E0;strokeColor=#E65100;fontStyle=1;fontSize=11;fontColor=#BF360C;rounded=1;arcSize=4;"
+          vertex="1" parent="1">
+          <mxGeometry x="50" y="1455" width="1250" height="105" as="geometry" />
+        </mxCell>
+
+        <mxCell id="51" value="&lt;b&gt;RabbitMQ&lt;/b&gt;&lt;br/&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;Message Broker&lt;/font&gt;"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#E65100;fontSize=12;fontColor=#BF360C;arcSize=15;"
+          vertex="1" parent="50">
+          <mxGeometry x="160" y="33" width="190" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="52" value="&lt;b&gt;WebSocket&lt;/b&gt;&lt;br/&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;Real-Time Push to Clients&lt;/font&gt;"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#B3E5FC;strokeColor=#0288D1;fontSize=12;fontColor=#01579B;arcSize=15;"
+          vertex="1" parent="50">
+          <mxGeometry x="680" y="33" width="190" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- ===== DATABASE LAYER ===== -->
+        <mxCell id="60" value="DATABASE LAYER"
+          style="swimlane;startSize=28;fillColor=#F1F8E9;strokeColor=#33691E;fontStyle=1;fontSize=11;fontColor=#1B5E20;rounded=1;arcSize=4;"
+          vertex="1" parent="1">
+          <mxGeometry x="50" y="1615" width="1250" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="61" value="&lt;b&gt;MongoDB&lt;/b&gt;&lt;br/&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;Primary Database&lt;br/&gt;GeoJSON + 2dsphere Index&lt;/font&gt;"
+          style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=11;fontColor=#1B5E20;verticalLabelPosition=middle;verticalAlign=middle;"
+          vertex="1" parent="60">
+          <mxGeometry x="80" y="25" width="170" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="62" value="&lt;b&gt;Redis&lt;/b&gt;&lt;br/&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;Cache &amp;amp; Session Store&lt;br/&gt;(Auth Service Only)&lt;/font&gt;"
+          style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#C62828;fontSize=11;fontColor=#B71C1C;verticalLabelPosition=middle;verticalAlign=middle;"
+          vertex="1" parent="60">
+          <mxGeometry x="380" y="25" width="170" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="63" value="&lt;b&gt;Docker&lt;/b&gt;&lt;br/&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;Containerized Deployment&lt;br/&gt;docker-compose.yml&lt;/font&gt;"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#B3E5FC;strokeColor=#0288D1;fontSize=11;fontColor=#01579B;arcSize=15;"
+          vertex="1" parent="60">
+          <mxGeometry x="680" y="30" width="170" height="65" as="geometry" />
+        </mxCell>
+
+        <!-- ===== SIDE PANELS ===== -->
+
+        <mxCell id="70" value="&lt;b&gt;Real-Time Nearby Worker Search&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;Worker Mobile App&lt;br/&gt;&amp;darr; GPS Coordinates&lt;br/&gt;API Gateway&lt;br/&gt;&amp;darr; routes&lt;br/&gt;Job Service&lt;br/&gt;&amp;darr; query&lt;br/&gt;MongoDB GeoJSON&lt;br/&gt;&amp;darr; 2dsphere Index&lt;br/&gt;Nearby Worker Results&lt;br/&gt;&amp;darr;&lt;br/&gt;Employer App"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E0F2F1;strokeColor=#00796B;fontSize=11;verticalAlign=top;align=center;arcSize=8;"
+          vertex="1" parent="1">
+          <mxGeometry x="1350" y="380" width="300" height="290" as="geometry" />
+        </mxCell>
+
+        <mxCell id="71" value="&lt;b&gt;Security Layer&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;Spring Security&lt;br/&gt;JWT Token Auth&lt;br/&gt;Role-Based Access Control&lt;br/&gt;&lt;br/&gt;Roles:&lt;br/&gt;&#x25cf; ADMIN &amp;mdash; Full Access&lt;br/&gt;&#x25cf; EMPLOYER &amp;mdash; Job &amp;amp; Worker Mgmt&lt;br/&gt;&#x25cf; WORKER &amp;mdash; Job &amp;amp; Attendance&lt;br/&gt;&lt;br/&gt;&lt;font style=&quot;font-size:9px;font-style:italic;&quot;&gt;All requests validated at API Gateway&lt;/font&gt;"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1A2744;strokeColor=#0D47A1;fontSize=11;fontColor=#FFFFFF;verticalAlign=top;align=center;arcSize=8;"
+          vertex="1" parent="1">
+          <mxGeometry x="1350" y="710" width="300" height="240" as="geometry" />
+        </mxCell>
+
+        <mxCell id="72" value="&lt;b&gt;AI Engine Capabilities&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;Review Moderation&lt;br/&gt;Spam Detection&lt;br/&gt;Fake Review Filter&lt;br/&gt;Toxic Content Block&lt;br/&gt;Abusive Language Flag&lt;br/&gt;Sentiment Analysis&lt;br/&gt;&lt;br/&gt;Worker Recommendation&lt;br/&gt;Reliability Score&lt;br/&gt;Match Score&lt;br/&gt;Fraud Detection&lt;br/&gt;&lt;br/&gt;&lt;font style=&quot;font-size:9px;font-style:italic;&quot;&gt;Powered by Spring AI + LLM&lt;/font&gt;"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311B92;strokeColor=#1A237E;fontSize=11;fontColor=#FFFFFF;verticalAlign=top;align=center;arcSize=8;"
+          vertex="1" parent="1">
+          <mxGeometry x="1350" y="990" width="300" height="290" as="geometry" />
+        </mxCell>
+
+        <!-- ===== FOOTER ===== -->
+        <mxCell id="80" value="&lt;b&gt;TECH STACK:&lt;/b&gt;  Java  |  Spring Boot  |  Spring Cloud  |  Eureka  |  Config Server  |  API Gateway  |  MongoDB  |  Redis  |  RabbitMQ  |  WebSocket  |  Docker  |  OpenFeign  |  JWT  |  Spring AI"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1A2744;strokeColor=#0D47A1;fontColor=#FFFFFF;fontSize=11;align=center;arcSize=4;"
+          vertex="1" parent="1">
+          <mxGeometry x="50" y="1790" width="1250" height="45" as="geometry" />
+        </mxCell>
+
+        <mxCell id="81" value="&lt;b&gt;github.com/Doctor22d/GramWork&lt;/b&gt;"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#24292E;strokeColor=#000000;fontColor=#FFFFFF;fontSize=12;align=center;arcSize=4;"
+          vertex="1" parent="1">
+          <mxGeometry x="1350" y="1790" width="300" height="45" as="geometry" />
+        </mxCell>
+
+        <!-- ===== EDGES / CONNECTIONS ===== -->
+
+        <!-- Clients to API Gateway -->
+        <mxCell id="100" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.15;entryY=0;entryDx=0;entryDy=0;endArrow=block;endFill=1;" edge="1" source="5" target="10" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="101" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=block;endFill=1;" edge="1" source="6" target="10" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="102" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.85;entryY=0;entryDx=0;entryDy=0;endArrow=block;endFill=1;" edge="1" source="7" target="10" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- API Gateway to Microservices -->
+        <mxCell id="103" value="routes requests" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=block;endFill=1;strokeColor=#1565C0;fontColor=#1565C0;fontSize=10;" edge="1" source="10" target="20" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Eureka registration (dotted) -->
+        <mxCell id="110" value="register" style="edgeStyle=orthogonalEdgeStyle;dashed=1;rounded=0;orthogonalLoop=1;jettySize=auto;endArrow=open;endFill=0;strokeColor=#7B1FA2;fontColor=#7B1FA2;fontSize=9;" edge="1" source="21" target="12" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="111" value="register" style="edgeStyle=orthogonalEdgeStyle;dashed=1;rounded=0;orthogonalLoop=1;jettySize=auto;endArrow=open;endFill=0;strokeColor=#7B1FA2;fontColor=#7B1FA2;fontSize=9;" edge="1" source="24" target="12" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="112" value="register" style="edgeStyle=orthogonalEdgeStyle;dashed=1;rounded=0;orthogonalLoop=1;jettySize=auto;endArrow=open;endFill=0;strokeColor=#7B1FA2;fontColor=#7B1FA2;fontSize=9;" edge="1" source="26" target="12" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Config Server fetch (dotted) -->
+        <mxCell id="113" value="fetch config" style="edgeStyle=orthogonalEdgeStyle;dashed=1;rounded=0;orthogonalLoop=1;jettySize=auto;endArrow=open;endFill=0;strokeColor=#388E3C;fontColor=#388E3C;fontSize=9;" edge="1" source="13" target="20" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- == INTER-SERVICE FLOWS (inside microservices swimlane) == -->
+
+        <!-- Employer Profile Service -> Job Service (post job) -->
+        <mxCell id="120" value="post job" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#388E3C;fontColor=#388E3C;fontSize=9;" edge="1" source="24" target="28" parent="20">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Job Service -> Assignment Service -->
+        <mxCell id="121" value="create assignment" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#00796B;fontColor=#00796B;fontSize=9;" edge="1" source="28" target="30" parent="20">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Assignment Service -> Attendance Service -->
+        <mxCell id="122" value="track attendance" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#558B2F;fontColor=#558B2F;fontSize=9;" edge="1" source="30" target="32" parent="20">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Assignment Service -> Payment Service -->
+        <mxCell id="123" value="trigger payment" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#E65100;fontColor=#E65100;fontSize=9;" edge="1" source="30" target="34" parent="20">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Review Service -> AI Analysis Service -->
+        <mxCell id="124" value="send for moderation" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.3;entryDx=0;entryDy=0;strokeColor=#311B92;fontColor=#311B92;fontSize=9;" edge="1" source="39" target="41" parent="20">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Laborer Profile Service -> AI Matching Service -->
+        <mxCell id="125" value="worker profile data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#1A237E;fontColor=#1A237E;fontSize=9;" edge="1" source="26" target="42" parent="20">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Job Service -> AI Matching Service -->
+        <mxCell id="126" value="get worker recommendations" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;strokeColor=#1A237E;fontColor=#1A237E;fontSize=9;" edge="1" source="28" target="42" parent="20">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Worker Service -> Attendance Service -->
+        <mxCell id="127" value="GPS check-in" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#0288D1;fontColor=#0288D1;fontSize=9;" edge="1" source="26" target="32" parent="20">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- == CROSS-LAYER EDGES == -->
+
+        <!-- Assignment Service -> RabbitMQ -->
+        <mxCell id="130" value="publish job events" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.45;entryY=0;entryDx=0;entryDy=0;strokeColor=#E65100;fontColor=#E65100;fontSize=9;" edge="1" source="30" target="51" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- RabbitMQ -> Notification Service -->
+        <mxCell id="131" value="consume &amp;amp; dispatch" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=0.55;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeColor=#6A1B9A;fontColor=#6A1B9A;fontSize=9;" edge="1" source="51" target="36" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Notification Service -> WebSocket -->
+        <mxCell id="132" value="real-time push" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#0288D1;fontColor=#0288D1;fontSize=9;" edge="1" source="36" target="52" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- WebSocket -> Clients (Employer + Worker) -->
+        <mxCell id="133" value="push to employer &amp;amp; worker" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;dashed=1;strokeColor=#0288D1;fontColor=#0288D1;fontSize=9;" edge="1" source="52" target="6" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- All services -> MongoDB -->
+        <mxCell id="140" value="stores data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=0.3;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#2E7D32;fontColor=#2E7D32;fontSize=9;" edge="1" source="20" target="61" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Auth Service -> Redis -->
+        <mxCell id="141" value="cache sessions" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=0.1;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#C62828;fontColor=#C62828;fontSize=9;" edge="1" source="21" target="62" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Messaging -> Database -->
+        <mxCell id="142" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="50" target="60" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
